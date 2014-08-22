@@ -1,0 +1,60 @@
+---
+title       : Rpart results per various random data samples
+subtitle    : An application in R and Shiny
+author      : QuantumDamage
+job         : 
+framework   : io2012        # {io2012, html5slides, shower, dzslides, ...}
+highlighter : highlight.js  # {highlight.js, prettify, highlight}
+hitheme     : tomorrow      # 
+widgets     : []            # {mathjax, quiz, bootstrap}
+mode        : selfcontained # {standalone, draft}
+knit        : slidify::knit2slides
+---
+
+## What is rpart?
+
+R's **rpart** package provides nice and easy way to use Recursive Partitioning and Regression Trees. It could be used to predict class membership or determine numeric vale. I recommend to use it with **rpart.plot** package for nicer tree plots.
+
+--- 
+
+## Usage
+
+
+```r
+library(rpart)
+library(rpart.plot)
+fit <- rpart(Price ~ Mileage + Type + Country, cu.summary)
+prp(fit)
+```
+
+<img src="assets/fig/unnamed-chunk-1.png" title="plot of chunk unnamed-chunk-1" alt="plot of chunk unnamed-chunk-1" style="display: block; margin: auto;" />
+
+---
+
+## Shiny app
+
+In my application I'm using the same formula, but I'm applying it on sampled data frame based on slider value.
+
+```{}
+sampledDataFrame <- reactive({
+...
+  sampled.df <- cu.summary[sample(x = nrow(cu.summary), size = input$slider1, 
+                                    replace = FALSE), ]
+...
+)}
+output$map <- renderPlot({
+  fit <- rpart(Price ~ Mileage + Type + Country, sampledDataFrame())
+  prp(fit)
+})
+```
+
+---
+
+## Actual application
+
+Application can be viewed here: [http://quantumdamage.shinyapps.io/ass1/](http://quantumdamage.shinyapps.io/ass1/)
+
+There are two small **bugs** described in application, but those bugs are related to usability not actual engine/modeling.
+
+Thanks for attention.
+
